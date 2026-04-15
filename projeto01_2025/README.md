@@ -22,7 +22,7 @@ O sistema Femanic&Co. tem como finalidade ajudar o público-alvo e tornar a comp
 
 - Nicolly de Aquino Santos RA:824147905
 
-- Giovanni Bolsoni Fernandes RA: 824125317
+- Giovanni Bolsoni Fernandes RA:824125317
 
 
 
