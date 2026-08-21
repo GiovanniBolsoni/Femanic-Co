@@ -11,6 +11,7 @@ import Header from '../Header';
 import Sidebar from '../Sidebar';
 import Footer from '../Footer';
 import EstrelasAvaliacao from '../EstrelasAvaliacao';
+import SelosConfianca from '../SelosConfianca';
 
 function ProdutoDetalhe() {
   const { id } = useParams();
@@ -172,6 +173,8 @@ function ProdutoDetalhe() {
                 <button className="btn btn-warning" onClick={handleAddToCart}>
                   Adicionar ao carrinho
                 </button>
+
+                <SelosConfianca />
               </div>
             </div>
 

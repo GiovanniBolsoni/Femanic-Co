@@ -7,6 +7,7 @@ import { formatarPreco } from '../../data/produtos';
 import { calcularFrete, FRETE_GRATIS_A_PARTIR_DE } from '../../data/frete';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
+import SelosConfianca from '../SelosConfianca';
 
 const FORMAS_PAGAMENTO = [
   { valor: 'pix', label: 'Pix' },
@@ -314,6 +315,7 @@ const Carrinho = () => {
                 <button onClick={handlePayment} disabled={processando}>
                   {processando ? 'PROCESSANDO...' : 'FINALIZAR PEDIDO'}
                 </button>
+                <SelosConfianca />
               </div>
             </div>
           </div>

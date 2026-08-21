@@ -8,6 +8,7 @@ import Superiores from "../components/pages/superiores";
 import Conjuntos from "../components/pages/conjuntos";
 import Inferiores from "../components/pages/inferiores";
 import ProdutoDetalhe from "../components/pages/ProdutoDetalhe";
+import PoliticaTrocas from "../components/pages/PoliticaTrocas";
 import PrivateRoute from "./PrivateRoute";
 
 export default function AppRoutes() {
@@ -17,6 +18,7 @@ export default function AppRoutes() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/politica-de-trocas" element={<PoliticaTrocas />} />
         <Route path="/home" element={<PrivateRoute><HomePage /></PrivateRoute>} />
         <Route path="/produtos" element={<PrivateRoute><Produtos /></PrivateRoute>} />
         <Route path="/produto/:id" element={<PrivateRoute><ProdutoDetalhe /></PrivateRoute>} />

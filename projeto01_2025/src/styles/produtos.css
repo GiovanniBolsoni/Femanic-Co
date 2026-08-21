@@ -201,6 +201,44 @@ footer a:hover {
     gap: 0.5rem;
 }
 
+/* Selos de confiança */
+.selos-confianca {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.selo-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: #495057;
+}
+
+.selo-item i {
+    color: #ffc107;
+    font-size: 1.1rem;
+}
+
+.selo-item a {
+    color: #495057;
+    text-decoration: underline;
+}
+
+/* Página de política de trocas */
+.politica-conteudo {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.politica-conteudo h3 {
+    margin-top: 1.5rem;
+}
+
 .avaliacao-form {
     max-width: 480px;
     margin-bottom: 1.5rem;
