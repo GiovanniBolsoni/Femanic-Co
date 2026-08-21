@@ -34,6 +34,21 @@ INSERT INTO produto (NOME, PRECO, CLASSE, IMAGEM) VALUES
   ('Calça Cargo Moletom Azul', 69.90, 'inferiores', '/Imagens/mzjd.jpg'),
   ('Calça Moletom Bege', 59.90, 'inferiores', '/Imagens/kP1O.jpg');
 
+-- Avaliações de produto (prova social): um usuário só pode avaliar
+-- cada produto uma vez (uq_avaliacao_produto_usuario).
+CREATE TABLE IF NOT EXISTS avaliacao (
+  ID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  ID_PRODUTO INT UNSIGNED NOT NULL,
+  ID_USUARIO INT UNSIGNED NOT NULL,
+  NOTA TINYINT UNSIGNED NOT NULL,
+  COMENTARIO VARCHAR(500),
+  CRIADO_EM TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_avaliacao_produto FOREIGN KEY (ID_PRODUTO) REFERENCES produto (IDPROD),
+  CONSTRAINT fk_avaliacao_usuario FOREIGN KEY (ID_USUARIO) REFERENCES usuario (ID),
+  CONSTRAINT uq_avaliacao_produto_usuario UNIQUE (ID_PRODUTO, ID_USUARIO),
+  CONSTRAINT chk_avaliacao_nota CHECK (NOTA BETWEEN 1 AND 5)
+);
+
 CREATE TABLE IF NOT EXISTS enderecos (
   ID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   RUA VARCHAR(180) NOT NULL,

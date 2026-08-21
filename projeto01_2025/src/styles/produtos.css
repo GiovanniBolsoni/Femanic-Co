@@ -146,6 +146,26 @@ footer a:hover {
 }
 
 
+/* Barra de busca e filtros */
+.filtro-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.filtro-bar select,
+.filtro-bar input {
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+}
+
+.filtro-busca {
+    flex: 1;
+    min-width: 200px;
+}
+
 /* Página de detalhe do produto */
 .produto-detalhe {
     display: flex;
@@ -179,6 +199,32 @@ footer a:hover {
 .tamanhos-lista {
     display: flex;
     gap: 0.5rem;
+}
+
+.avaliacao-form {
+    max-width: 480px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.avaliacao-form textarea {
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    resize: vertical;
+}
+
+.lista-avaliacoes {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+
+.lista-avaliacoes li {
+    border-bottom: 1px solid #e9ecef;
+    padding: 0.75rem 0;
 }
 
 /* Responsividade */

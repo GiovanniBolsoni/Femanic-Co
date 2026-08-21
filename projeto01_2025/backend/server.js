@@ -140,6 +140,84 @@ app.get('/api/produto', async (req, res) => {
   }
 });
 
+// resumo de avaliações (média + quantidade) de todos os produtos, usado nas listagens
+app.get('/api/avaliacoes/resumo', async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      'SELECT ID_PRODUTO, AVG(NOTA) AS media, COUNT(*) AS quantidade FROM avaliacao GROUP BY ID_PRODUTO'
+    );
+    res.json(rows.map((row) => ({
+      idProduto: row.ID_PRODUTO,
+      media: Number(row.media),
+      quantidade: row.quantidade,
+    })));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao buscar resumo de avaliações' });
+  }
+});
+
+// avaliações de um produto específico
+app.get('/api/produto/:id/avaliacoes', async (req, res) => {
+  const idProduto = Number(req.params.id);
+  if (!Number.isInteger(idProduto) || idProduto <= 0) {
+    return res.status(400).json({ message: 'Produto inválido.' });
+  }
+
+  try {
+    const [resumoRows] = await pool.query(
+      'SELECT AVG(NOTA) AS media, COUNT(*) AS quantidade FROM avaliacao WHERE ID_PRODUTO = ?',
+      [idProduto]
+    );
+    const [avaliacoes] = await pool.query(
+      `SELECT a.NOTA, a.COMENTARIO, a.CRIADO_EM, u.NOME AS nomeUsuario
+       FROM avaliacao a
+       JOIN usuario u ON u.ID = a.ID_USUARIO
+       WHERE a.ID_PRODUTO = ?
+       ORDER BY a.CRIADO_EM DESC`,
+      [idProduto]
+    );
+
+    res.json({
+      media: Number(resumoRows[0].media) || 0,
+      quantidade: resumoRows[0].quantidade,
+      avaliacoes,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao buscar avaliações' });
+  }
+});
+
+// registra uma avaliação para um produto (1 por usuário por produto)
+app.post('/api/produto/:id/avaliacoes', requireAuth, async (req, res) => {
+  const idProduto = Number(req.params.id);
+  const { nota, comentario } = req.body;
+
+  if (!Number.isInteger(idProduto) || idProduto <= 0) {
+    return res.status(400).json({ message: 'Produto inválido.' });
+  }
+
+  const notaNumerica = Number(nota);
+  if (!Number.isInteger(notaNumerica) || notaNumerica < 1 || notaNumerica > 5) {
+    return res.status(400).json({ message: 'A nota deve ser um número inteiro entre 1 e 5.' });
+  }
+
+  try {
+    await pool.query(
+      'INSERT INTO avaliacao (ID_PRODUTO, ID_USUARIO, NOTA, COMENTARIO) VALUES (?, ?, ?, ?)',
+      [idProduto, req.userId, notaNumerica, comentario?.trim().slice(0, 500) || null]
+    );
+    res.status(201).json({ message: 'Avaliação registrada com sucesso.' });
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.status(409).json({ message: 'Você já avaliou este produto.' });
+    }
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao registrar avaliação' });
+  }
+});
+
 // valida um cupom de desconto
 app.get('/api/cupom/:codigo', async (req, res) => {
   try {
