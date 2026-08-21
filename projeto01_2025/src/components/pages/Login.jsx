@@ -3,7 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import "../../styles/Login.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'boxicons/css/boxicons.min.css';
-import { apiRequest } from '../../services/api';
+import { apiRequest, setToken } from '../../services/api';
+import Header from '../Header';
+import Sidebar from '../Sidebar';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -23,7 +25,7 @@ export default function Login() {
         body: JSON.stringify(form),
       });
 
-      localStorage.setItem('usuarioId', result.id);
+      setToken(result.token);
       navigate('/home');
     } catch (error) {
       console.error("Erro na requisição:", error);
@@ -33,43 +35,10 @@ export default function Login() {
 
   return (
     <>
-      <header>
-        <h1>FEMANIC & CO.</h1>
-      </header>
+      <Header />
 
       <main className="mandatory">
-        <div className="sidebar close">
-          <div className="logo-details">
-            <i className='bx bxs-shopping-bag-alt'></i>
-            <span className="logo_name">FEMANIC & CO.</span>
-          </div>
-
-          <ul className="nav-links">
-            <li><Link to="/home"><span className="link_name">Home</span></Link></li>
-            <li>
-              <div className="iocn-link">
-                <Link to="/produtos"><i className="bx bx-collection"></i><span className="link_name">Produtos</span></Link>
-              </div>
-              <ul className="sub-menu">
-                <li><Link to="/conjuntos">Conjuntos</Link></li>
-                <li><Link to="/superiores">Superiores</Link></li>
-                <li><Link to="/inferiores">Inferiores</Link></li>
-              </ul>
-            </li>
-            <li>
-              <Link to="/carrinho"><i className="bx bx-cart"></i><span className="link_name">Carrinho</span></Link>
-            </li>
-            <li>
-              <div className="iocn-link">
-                <Link to="/login"><i className="bx bx-user"></i><span className="link_name">Conta</span></Link>
-              </div>
-              <ul className="sub-menu">
-                <li><Link to="/login">Login</Link></li>
-                <li><Link to="/cadastro">Cadastro</Link></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
+        <Sidebar />
 
         <form onSubmit={handleSubmit}>
           <fieldset>
