@@ -12,6 +12,10 @@ function loadCartFromStorage() {
   }
 }
 
+function chaveItem(item) {
+  return `${item.id}::${item.tamanho || ''}`;
+}
+
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(loadCartFromStorage);
 
@@ -21,11 +25,12 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (produto) => {
     setCartItems((prevItems) => {
-      const itemExistente = prevItems.find((item) => item.id === produto.id);
+      const chaveNova = chaveItem(produto);
+      const itemExistente = prevItems.find((item) => chaveItem(item) === chaveNova);
 
       if (itemExistente) {
         return prevItems.map((item) =>
-          item.id === produto.id
+          chaveItem(item) === chaveNova
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -35,15 +40,15 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  const removeFromCart = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  const removeFromCart = (chave) => {
+    setCartItems((prev) => prev.filter((item) => chaveItem(item) !== chave));
   };
 
-  const removeOneFromCart = (productId) => {
+  const removeOneFromCart = (chave) => {
     setCartItems((prevItems) =>
       prevItems
         .map((item) =>
-          item.id === productId
+          chaveItem(item) === chave
             ? { ...item, quantity: item.quantity - 1 }
             : item
         )
@@ -56,7 +61,7 @@ export const CartProvider = ({ children }) => {
   };
 
   const value = useMemo(
-    () => ({ cartItems, addToCart, removeFromCart, removeOneFromCart, clearCart }),
+    () => ({ cartItems, addToCart, removeFromCart, removeOneFromCart, clearCart, chaveItem }),
     [cartItems]
   );
 

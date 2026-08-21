@@ -49,7 +49,7 @@ function HomePage() {
             <div className="linha1"></div>
             <div className="produtos">
               {LANCAMENTOS.map((item) => (
-                <div className="item" key={item.id}>
+                <Link className="item" key={item.id} to={`/produto/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div className="produto_img">
                     <img className="img_item" src={item.src} alt={item.nome} loading="lazy" />
                     <div className="card-body"></div>
@@ -58,7 +58,7 @@ function HomePage() {
                     <span>{item.nome}</span>
                   </div>
                   <div className="line"></div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -80,7 +80,7 @@ function HomePage() {
             <div className="linha1"></div>
             <div className="produtos">
               {PECAS_DO_MES.map((item) => (
-                <div className="item" key={item.id}>
+                <Link className="item" key={item.id} to={`/produto/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div className="produto_img">
                     <img className="img_item" src={item.src} alt={item.nome} loading="lazy" />
                     <div className="card-body"></div>
@@ -89,7 +89,7 @@ function HomePage() {
                     <span>{item.nome}</span>
                   </div>
                   <div className="line"></div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
