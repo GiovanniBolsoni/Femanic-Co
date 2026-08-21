@@ -23,6 +23,17 @@ CREATE TABLE IF NOT EXISTS produto (
   IMAGEM VARCHAR(255)
 );
 
+INSERT INTO produto (NOME, PRECO, CLASSE, IMAGEM) VALUES
+  ('Moletom Simples Cinza', 89.90, 'superiores', '/Imagens/8Ve0.jpg'),
+  ('Conjunto Moletom', 159.90, 'conjuntos', '/Imagens/rtlM.jpg'),
+  ('Agasalho com Zíper Preto', 119.90, 'superiores', '/Imagens/gIk6.jpg'),
+  ('Calça de Moletom Cinza', 59.90, 'inferiores', '/Imagens/uuS2.jpg'),
+  ('Conjunto Moletom e Shorts Preto', 119.90, 'conjuntos', '/Imagens/o7Po.jpg'),
+  ('Conjunto Moletom Bege', 139.90, 'conjuntos', '/Imagens/zZa5.jpg'),
+  ('Cropped Preto', 39.90, 'superiores', '/Imagens/b95i.jpg'),
+  ('Calça Cargo Moletom Azul', 69.90, 'inferiores', '/Imagens/mzjd.jpg'),
+  ('Calça Moletom Bege', 59.90, 'inferiores', '/Imagens/kP1O.jpg');
+
 CREATE TABLE IF NOT EXISTS enderecos (
   ID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   RUA VARCHAR(180) NOT NULL,
@@ -34,13 +45,26 @@ CREATE TABLE IF NOT EXISTS enderecos (
   CRIADO_EM TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Cabeçalho do pedido: liga o usuário autenticado ao endereço de entrega.
+-- Sem esta tabela não havia como saber quem fez um pedido nem consultar
+-- o histórico de compras de um cliente.
+CREATE TABLE IF NOT EXISTS pedido (
+  ID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  ID_USUARIO INT UNSIGNED NOT NULL,
+  ID_ENDERECO INT UNSIGNED NOT NULL,
+  CRIADO_EM TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_pedido_usuario FOREIGN KEY (ID_USUARIO) REFERENCES usuario (ID),
+  CONSTRAINT fk_pedido_endereco FOREIGN KEY (ID_ENDERECO) REFERENCES enderecos (ID)
+);
+
 CREATE TABLE IF NOT EXISTS carrinhoprod (
   ID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  ID_CARRINHO BIGINT UNSIGNED NOT NULL,
+  ID_PEDIDO INT UNSIGNED NOT NULL,
   PRODUTO VARCHAR(160) NOT NULL,
   PRECO DECIMAL(10, 2) NOT NULL,
   QUANTIDADE INT UNSIGNED NOT NULL,
   SUBTOTAL DECIMAL(10, 2) GENERATED ALWAYS AS (PRECO * QUANTIDADE) STORED,
-  CRIADO_EM TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  CRIADO_EM TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_carrinhoprod_pedido FOREIGN KEY (ID_PEDIDO) REFERENCES pedido (ID)
 );
 

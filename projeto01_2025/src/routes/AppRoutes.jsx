@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from "../components/pages/Login";
 import Cadastro from "../components/pages/cadastro";
@@ -8,8 +7,7 @@ import Carrinho from "../components/pages/carrinho";
 import Superiores from "../components/pages/superiores";
 import Conjuntos from "../components/pages/conjuntos";
 import Inferiores from "../components/pages/inferiores";
-
-
+import PrivateRoute from "./PrivateRoute";
 
 export default function AppRoutes() {
   return (
@@ -18,12 +16,12 @@ export default function AppRoutes() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/produtos" element={<Produtos />} />
-        <Route path="/carrinho" element={<Carrinho />} />
-        <Route path="/superiores" element={<Superiores />} />
-        <Route path="/conjuntos" element={<Conjuntos />} />
-        <Route path="/inferiores" element={<Inferiores />} />
+        <Route path="/home" element={<PrivateRoute><HomePage /></PrivateRoute>} />
+        <Route path="/produtos" element={<PrivateRoute><Produtos /></PrivateRoute>} />
+        <Route path="/carrinho" element={<PrivateRoute><Carrinho /></PrivateRoute>} />
+        <Route path="/superiores" element={<PrivateRoute><Superiores /></PrivateRoute>} />
+        <Route path="/conjuntos" element={<PrivateRoute><Conjuntos /></PrivateRoute>} />
+        <Route path="/inferiores" element={<PrivateRoute><Inferiores /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </Router>
