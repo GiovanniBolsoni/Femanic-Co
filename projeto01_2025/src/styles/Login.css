@@ -37,7 +37,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  
+
 }
 
 body, html {
@@ -262,7 +262,7 @@ fieldset h1 {
 @media (max-width: 768px) {
     main.mandatory {
         margin-left: 0;
-        padding: 1rem;  
+        padding: 1rem;
         min-width: auto; /* Ajusta no mobile para não quebrar layout */
     }
     .sidebar {
@@ -277,7 +277,7 @@ fieldset h1 {
     .produtos {
         justify-content: center;
     }
-}   
+}
 /* Rodapé */
 footer.rodape {
     background-color: #212529;

@@ -324,8 +324,8 @@ footer a:hover {
 @media (max-width: 768px) {
     main.mandatory {
         margin-left: 0;
-        padding: 1rem;  
-        min-width: auto; 
+        padding: 1rem;
+        min-width: auto;
     }
     .sidebar {
         position: relative;
@@ -339,4 +339,4 @@ footer a:hover {
     .produtos {
         justify-content: center;
     }
-}   
+}

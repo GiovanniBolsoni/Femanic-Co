@@ -4,7 +4,7 @@
 
 
 .content {
-  margin-left:  0px; 
+  margin-left:  0px;
   padding:  0;
   margin-top: 0;
   width: calc(100% - 250px);
@@ -67,7 +67,7 @@ margin-left: 235px;
 table {
   width: 100%;
   border-collapse: collapse;
-  
+
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -139,7 +139,7 @@ th {
 }
 
 .form-group label {
-  
+
   margin-bottom: 0.5rem;
   font-weight: 600;
   text-align: left;
@@ -147,7 +147,7 @@ th {
 
 .form-group input,
 .form-group select {
- 
+
   width: 100%;
   padding: 0.6rem;
   border: 1px solid #ced4da;
@@ -215,7 +215,7 @@ form button[type="submit"]:hover {
   flex-direction: column;
   align-items: center;
   gap: 2rem;
-  margin-top: 0rem; 
+  margin-top: 0rem;
   width: 140%;
 }
 
@@ -226,7 +226,7 @@ form button[type="submit"]:hover {
 
   table {
     font-size: 0.9rem;
-    
+
   }
 
   .quantity-control {
