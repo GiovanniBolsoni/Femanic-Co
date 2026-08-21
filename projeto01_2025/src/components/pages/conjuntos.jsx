@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'boxicons/css/boxicons.min.css';
 import '../../styles/superiores.css';
 import '../../styles/produtos.css';
 import { Link } from 'react-router-dom';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '../../context/useCart';
 
 function Conjuntos() {
   const { cartItems, addToCart } = useCart();
-  
+
 const location = useLocation();
 useEffect(() => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -21,8 +21,8 @@ const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
     { id: 2, src: '/Imagens/rtlM.jpg', nome: 'Conjunto Moletom', preco: 'R$ 159,90' },
     { id: 5, src: '/Imagens/o7Po.jpg', nome: 'Conjunto Moletom e Shorts Preto', preco: 'R$ 119,90' },
     { id: 6, src: '/Imagens/zZa5.jpg', nome: 'Conjunto Moletom Bege', preco: 'R$ 139,90' },
-    
-  ];    
+
+  ];
 
   const handleAddToCart = (item) => {
     const precoNumerico = parseFloat(item.preco.replace('R$', '').replace(',', '.'));

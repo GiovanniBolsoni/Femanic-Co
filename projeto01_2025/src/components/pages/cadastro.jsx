@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import "../../styles/cadastro.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'boxicons/css/boxicons.min.css';
 import { useNavigate } from 'react-router-dom';
+import { apiRequest } from '../../services/api';
 
 export default function Cadastro() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function Cadastro() {
     });
   };
 
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -35,11 +36,8 @@ export default function Cadastro() {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/api/cadastro', {
+      const result = await apiRequest('/cadastro', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           nome: form.nome,
           email: form.email,
@@ -50,15 +48,11 @@ export default function Cadastro() {
         }),
       });
 
-      const result = await response.json();
       alert(result.message);
-
-      if (response.ok) {
-        navigate("/login");
-      }
+      navigate('/login');
     } catch (error) {
       console.error("Erro ao cadastrar:", error);
-      alert("Erro ao realizar cadastro.");
+      alert(error.message);
     }
   };
 
@@ -107,7 +101,7 @@ export default function Cadastro() {
                 </Link>
               </div>
               <ul className="sub-menu">
-                <li><Link to="/Login">Login</Link></li>
+                <li><Link to="/login">Login</Link></li>
                 <li><Link to="/cadastro">Cadastro</Link></li>
               </ul>
             </li>
@@ -169,5 +163,3 @@ export default function Cadastro() {
     </>
   );
 }
-
-

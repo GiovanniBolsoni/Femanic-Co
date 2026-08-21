@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'boxicons/css/boxicons.min.css';
 import '../../styles/superiores.css';
 import '../../styles/produtos.css';
 import { Link } from 'react-router-dom';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '../../context/useCart';
 
 function Inferiores() {
   const { cartItems, addToCart } = useCart();
@@ -21,8 +21,8 @@ useEffect(() => {
     { id: 4, src: '/Imagens/uuS2.jpg', nome: 'Calça de Moletom Cinza', preco: 'R$ 59,90' },
     { id: 8, src: '/Imagens/mzjd.jpg', nome: 'Calça Cargo Moletom Azul', preco: 'R$ 69,90' },
     { id: 9, src: '/Imagens/kP1O.jpg', nome: 'Calça Moletom Bege', preco: 'R$ 59,90' },
-    
-  ];    
+
+  ];
 
   const handleAddToCart = (item) => {
     const precoNumerico = parseFloat(item.preco.replace('R$', '').replace(',', '.'));

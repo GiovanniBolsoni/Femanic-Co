@@ -1,35 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'boxicons/css/boxicons.min.css';
 import '../../styles/Login.css';
 import '../../styles/produtos.css';
 import { Link } from 'react-router-dom';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '../../context/useCart';
 
 function Produtos() {
   const { cartItems, addToCart } = useCart();
   const location = useLocation();
 
-  const [produto, setProdutos] = useState([]);
-
 useEffect(() => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    fetch('http://localhost:3001/api/produto') 
-      .then((res) => res.json())
-      .then((data) => {
-        const produtosComImagem = data.map(prod => ({
-          id: prod.IDPROD,
-          nome: prod.NOME,
-          preco: `R$ ${prod.PRECO.toFixed(2).replace('.', ',')}`,
-          src: `/Imagens/${prod.IDPROD}.jpg` 
-        }));
-        setProdutos(produtosComImagem);
-      })
-      .catch((err) => {
-        console.error('Erro ao buscar produtos:', err);
-      });
 }, [location.pathname]);
 
 
@@ -147,7 +130,7 @@ const handleAddToCart = (item) => {
             </div>
             </div>
         </section>
-      
+
 
       <footer className="rodape" id="contato">
         <div className="rodape-div">

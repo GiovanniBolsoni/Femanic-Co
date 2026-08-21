@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import "../../styles/Login.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'boxicons/css/boxicons.min.css';
+import { apiRequest } from '../../services/api';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -17,26 +18,16 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await fetch('http://localhost:3001/api/login', {
+      const result = await apiRequest('/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
 
-      const result = await res.json();
-
-      if (res.ok) {
-        alert(result.message || "Login realizado com sucesso!");
-
-        localStorage.setItem('usuarioId', result.id);
-        
-        navigate("/home");
-      } else {
-        alert(result.message || "Erro ao fazer login");
-      }
+      localStorage.setItem('usuarioId', result.id);
+      navigate('/home');
     } catch (error) {
       console.error("Erro na requisição:", error);
-      alert("Erro ao se conectar com o servidor.");
+      alert(error.message);
     }
   };
 

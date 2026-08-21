@@ -1,166 +1,139 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { useCart } from "../../context/CartContext";
+import { useCart } from '../../context/useCart';
 import "../../styles/carrinho.css";
-import { useState } from "react";
+import { apiRequest } from '../../services/api';
 
 const Carrinho = () => {
-  const navigate = useNavigate();
-  const { cartItems, addToCart, removeOneFromCart, removeFromCart, clearCart } = useCart();
+  const navigate = useNavigate();
+  const { cartItems, addToCart, removeOneFromCart, removeFromCart, clearCart } = useCart();
 
-const location = useLocation();
-useEffect(() => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}, [location.pathname]);
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
 
-  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0); 
+  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  const [endereco, setEndereco] = useState({
-    rua: "",
-    numero: "",
-    bairro: "",
-    complemento: "",
-    estado: "",
-    cidade: "",
-  });
+  const [endereco, setEndereco] = useState({
+    rua: "",
+    numero: "",
+    bairro: "",
+    complemento: "",
+    estado: "",
+    cidade: "",
+  });
 
-const [salvando, setSalvando] = useState(false);
+  const [processando, setProcessando] = useState(false);
 
-  const salvarEndereco = async (e) => {
-    e.preventDefault();
-    setSalvando(true);
-    try {
-      const response = await fetch("http://localhost:3001/api/endereco",{
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(endereco),
-      });
-
-      if (response.ok) {
-        alert("Endereço salvo com sucesso!");
-      } else {
-        alert("Erro ao salvar endereço.");
-      }
-    } catch (error) {
-      console.error("Erro ao salvar endereço:", error);
-      alert("Erro na comunicação com o servidor.");
-    } finally {
-      setSalvando(false); 
-    } 
-  };
-
-  const handlePayment = async () => {
-  if (cartItems.length === 0) {
-    alert('Adicione produtos no carrinho para prosseguir!');
-    navigate('/produtos');
-    return;
-  }
-
-  const camposObrigatorios = [
-    endereco.rua, endereco.numero, endereco.bairro,
-    endereco.complemento, endereco.estado, endereco.cidade,
-  ];
-
-  const enderecoPreenchido = camposObrigatorios.every((campo) => campo.trim() !== "");
-  if (!enderecoPreenchido) {
-    alert('Preencha todos os campos do endereço antes de prosseguir para o pagamento.');
-    return;
-  }
-
-  const dadosCarrinho = {
-    endereco,
-    produtos: cartItems.map((item) => ({
-      nome: item.name,
-      preco: item.price,
-      quantidade: item.quantity
-    }))
+  const validarEndereco = (e) => {
+    e.preventDefault();
+    alert('Endereço preenchido. Agora você pode finalizar o pedido.');
   };
 
-  try {
-    const carrinhoResponse = await fetch("http://localhost:3001/api/carrinho", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dadosCarrinho),
-    });
-
-    if (!carrinhoResponse.ok) {
-      throw new Error("Erro ao salvar o carrinho");
+  const handlePayment = async () => {
+    if (cartItems.length === 0) {
+      alert('Adicione produtos no carrinho para prosseguir!');
+      navigate('/produtos');
+      return;
     }
 
-    // Salva o endereço 
-    await fetch("http://localhost:3001/api/endereco", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(endereco),
-    });
+    const camposObrigatorios = [
+      endereco.rua,
+      endereco.numero,
+      endereco.bairro,
+      endereco.estado,
+      endereco.cidade,
+    ];
 
-    alert('Pagamento realizado e carrinho salvo com sucesso!');
-    clearCart();
-    setEndereco({
-      rua: "", 
-      numero: "", 
-      bairro: "",
-      complemento: "", 
-      estado: "", 
-      cidade: "",
-    });
-    
-    navigate('/home');
+    if (!camposObrigatorios.every((campo) => campo.trim() !== '')) {
+      alert('Preencha todos os campos obrigatórios do endereço.');
+      return;
+    }
 
-  } catch (error) {
-    console.error("Erro ao processar pagamento:", error);
-    alert("Erro na comunicação com o servidor.");
-  }
-};
+    const dadosCarrinho = {
+      endereco,
+      produtos: cartItems.map((item) => ({
+        nome: item.name,
+        preco: item.price,
+        quantidade: item.quantity,
+      })),
+    };
 
-  return (
-    <main className="mandatory">
-      <div className="sidebar close">
-        <div className="logo-details">
-          <i className="bx bxs-shopping-bag-alt"></i>
-          <span className="logo_name">FEMANIC & CO.</span>
-        </div>
-        <ul className="nav-links">
-          <li><Link to="/home"><span className="link_name">Home</span></Link></li>
-          <li>
-            <div className="iocn-link">
-              <Link to="/produtos">
-                <i className="bx bx-collection"></i>
-                <span className="link_name">Produtos</span>
-              </Link>
-            </div>
-            <ul className="sub-menu">
-              <li><Link to="/conjuntos">Conjuntos</Link></li>
-              <li><Link to="/superiores">Superiores</Link></li>
-              <li><Link to="/inferiores">Inferiores</Link></li>
-            </ul>
-          </li>
-          <li>
-            <Link to="/carrinho">
-              <i className="bx bx-cart"></i>
-              <span className="link_name">
-                Carrinho {totalItems > 0 && <strong>({totalItems})</strong>}
-              </span>
-            </Link>
-            <ul className="sub-menu blank">
-              <li><Link className="link_name" to="/carrinho">Carrinho</Link></li>
-            </ul>
-          </li>
-          <li>
-            <div className="iocn-link">
-              <Link to="/login">
-                <i className="bx bx-user"></i>
-                <span className="link_name">Conta</span>
-              </Link>
-            </div>
-            <ul className="sub-menu">
-              <li><Link to="/Login">Login</Link></li>
-              <li><Link to="/cadastro">Cadastro</Link></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
+    try {
+      setProcessando(true);
+      await apiRequest('/carrinho', {
+        method: 'POST',
+        body: JSON.stringify(dadosCarrinho),
+      });
+
+      alert('Pedido finalizado e salvo com sucesso!');
+      clearCart();
+      setEndereco({
+        rua: '',
+        numero: '',
+        bairro: '',
+        complemento: '',
+        estado: '',
+        cidade: '',
+      });
+      navigate('/home');
+    } catch (error) {
+      console.error('Erro ao processar o pedido:', error);
+      alert(error.message);
+    } finally {
+      setProcessando(false);
+    }
+  };
+
+  return (
+    <main className="mandatory">
+      <div className="sidebar close">
+        <div className="logo-details">
+          <i className="bx bxs-shopping-bag-alt"></i>
+          <span className="logo_name">FEMANIC & CO.</span>
+        </div>
+        <ul className="nav-links">
+          <li><Link to="/home"><span className="link_name">Home</span></Link></li>
+          <li>
+            <div className="iocn-link">
+              <Link to="/produtos">
+                <i className="bx bx-collection"></i>
+                <span className="link_name">Produtos</span>
+              </Link>
+            </div>
+            <ul className="sub-menu">
+              <li><Link to="/conjuntos">Conjuntos</Link></li>
+              <li><Link to="/superiores">Superiores</Link></li>
+              <li><Link to="/inferiores">Inferiores</Link></li>
+            </ul>
+          </li>
+          <li>
+            <Link to="/carrinho">
+              <i className="bx bx-cart"></i>
+              <span className="link_name">
+                Carrinho {totalItems > 0 && <strong>({totalItems})</strong>}
+              </span>
+            </Link>
+            <ul className="sub-menu blank">
+              <li><Link className="link_name" to="/carrinho">Carrinho</Link></li>
+            </ul>
+          </li>
+          <li>
+            <div className="iocn-link">
+              <Link to="/login">
+                <i className="bx bx-user"></i>
+                <span className="link_name">Conta</span>
+              </Link>
+            </div>
+            <ul className="sub-menu">
+              <li><Link to="/login">Login</Link></li>
+              <li><Link to="/cadastro">Cadastro</Link></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
 
         <div className="p-6 bg-gray-100 min-h-screen content">
           <div className="botao-voltar">
@@ -200,11 +173,11 @@ const [salvando, setSalvando] = useState(false);
             </table>
           </div>
           </div>
-        
+
           <div className="endereco-container">
             <div className="endereco-form">
               <h3>Endereço</h3>
-              <form onSubmit={salvarEndereco} className="form-grid">
+              <form onSubmit={validarEndereco} className="form-grid">
                 <div className="form-group">
                   <label>Endereço</label>
                   <input type="text" placeholder="Av. Nova" value={endereco.rua} onChange={(e) => setEndereco({ ...endereco, rua: e.target.value })} required />
@@ -219,7 +192,7 @@ const [salvando, setSalvando] = useState(false);
                 </div>
                 <div className="form-group">
                   <label>Complemento</label>
-                  <input type="text" placeholder="Cj 2715" value={endereco.complemento} onChange={(e) => setEndereco({ ...endereco, complemento: e.target.value })} required />
+                  <input type="text" placeholder="Cj 2715 (opcional)" value={endereco.complemento} onChange={(e) => setEndereco({ ...endereco, complemento: e.target.value })} />
                 </div>
                 <div className="form-group">
                   <label>Estado</label>
@@ -259,23 +232,25 @@ const [salvando, setSalvando] = useState(false);
                   <input type="text" placeholder="São Paulo" value={endereco.cidade} onChange={(e) => setEndereco({ ...endereco, cidade: e.target.value })} required />
                 </div>
                 <div className="form-submit">
-                  <button type="submit" disabled={salvando}> {salvando ? "Salvando..." : "Salvar Endereço"}</button>
+                  <button type="submit">Confirmar endereço</button>
                 </div>
               </form>
-            
-          
+
+
               <div className="total-container">
                 <h3>Total no carrinho</h3>
                 <div>
                   <p>Subtotal: <strong>R$ {total.toFixed(2)}</strong></p>
                   <p>Total: <strong>R$ {total.toFixed(2)}</strong></p>
-                <button onClick={handlePayment}>IR PARA O PAGAMENTO</button>
+                <button onClick={handlePayment} disabled={processando}>
+                  {processando ? 'PROCESSANDO...' : 'FINALIZAR PEDIDO'}
+                </button>
             </div>
           </div>
         </div>
       </div>
   </main>
-  )
+  );
 }
 
 export default Carrinho;

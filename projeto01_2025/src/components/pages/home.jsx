@@ -1,75 +1,75 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'boxicons/css/boxicons.min.css';
 import '../../styles/index.css';
 import { Link } from 'react-router-dom';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '../../context/useCart';
 
 function HomePage() {
-  const { cartItems } = useCart(); 
-  const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const { cartItems } = useCart();
+  const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
 const location = useLocation();
 useEffect(() => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }, [location.pathname]);
-  return (
-    <>
-      <header>
-        <h1>FEMANIC & CO.</h1>
-      </header>
+  return (
+    <>
+      <header>
+        <h1>FEMANIC & CO.</h1>
+      </header>
 
-      <main className="mandatory">
-        <div className="sidebar close">
-          <div className="logo-details">
-            <i className="bx bxs-shopping-bag-alt"></i>
-            <span className="logo_name">FEMANIC & CO.</span>
-          </div>
-          <ul className="nav-links">
-            <li>
-              <Link to="/home">
-                <span className="link_name">Home</span>
-              </Link>
-            </li>
-            <li>
-              <div className="iocn-link">
-                <Link to="/produtos">
-                  <i className="bx bx-collection"></i>
-                  <span className="link_name">Produtos</span>
-                </Link>
-              </div>
-              <ul className="sub-menu">
-                <li><Link to="/conjuntos">Conjuntos</Link></li>
-                <li><Link to="/superiores">Superiores</Link></li>
-                <li><Link to="/inferiores">Inferiores</Link></li>
-              </ul>
-            </li>
-            <li>
-              <Link to="/carrinho">
-                <i className="bx bx-cart"></i>
-                <span className="link_name">
-                  Carrinho {totalItems > 0 && <strong>({totalItems})</strong>}
-                </span>
-              </Link>
-              <ul className="sub-menu blank">
-                <li><Link className="link_name" to="/carrinho">Carrinho</Link></li>
-              </ul>
-            </li>
-            <li>
-              <div className="iocn-link">
-                <Link to="/login">
-                  <i className="bx bx-user"></i>
-                  <span className="link_name">Conta</span>
-                </Link>
-              </div>
-              <ul className="sub-menu">
-                <li><Link to="/Login">Login</Link></li>
-                <li><Link to="/cadastro">Cadastro</Link></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
+      <main className="mandatory">
+        <div className="sidebar close">
+          <div className="logo-details">
+            <i className="bx bxs-shopping-bag-alt"></i>
+            <span className="logo_name">FEMANIC & CO.</span>
+          </div>
+          <ul className="nav-links">
+            <li>
+              <Link to="/home">
+                <span className="link_name">Home</span>
+              </Link>
+            </li>
+            <li>
+              <div className="iocn-link">
+                <Link to="/produtos">
+                  <i className="bx bx-collection"></i>
+                  <span className="link_name">Produtos</span>
+                </Link>
+              </div>
+              <ul className="sub-menu">
+                <li><Link to="/conjuntos">Conjuntos</Link></li>
+                <li><Link to="/superiores">Superiores</Link></li>
+                <li><Link to="/inferiores">Inferiores</Link></li>
+              </ul>
+            </li>
+            <li>
+              <Link to="/carrinho">
+                <i className="bx bx-cart"></i>
+                <span className="link_name">
+                  Carrinho {totalItems > 0 && <strong>({totalItems})</strong>}
+                </span>
+              </Link>
+              <ul className="sub-menu blank">
+                <li><Link className="link_name" to="/carrinho">Carrinho</Link></li>
+              </ul>
+            </li>
+            <li>
+              <div className="iocn-link">
+                <Link to="/login">
+                  <i className="bx bx-user"></i>
+                  <span className="link_name">Conta</span>
+                </Link>
+              </div>
+              <ul className="sub-menu">
+                <li><Link to="/login">Login</Link></li>
+                <li><Link to="/cadastro">Cadastro</Link></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
 
 
         <section className="home1" id="home1">
@@ -83,10 +83,10 @@ useEffect(() => {
         <section className="home3" id="home3">
           <div className="box">
             <div className="header_new">
-              <h2>LANÇAMENTOS</h2>          
+              <h2>LANÇAMENTOS</h2>
             <div className="btn_veja">
-             <Link to="/produtos">
-                 VEJA TUDO
+             <Link to="/produtos">
+                 VEJA TUDO
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 22 22" fill="none">
                   <path d="M1 21L21 1M21 1V20.2M21 1H1.8" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -99,7 +99,7 @@ useEffect(() => {
                 { src: '/Imagens/8Ve0.jpg', nome: 'Moletom Simples Cinza' },
                 { src: '/Imagens/gIk6.jpg', nome: 'Agasalho com Zíper Preto' },
                 { src: '/Imagens/rtlM.jpg', nome: 'Conjunto Moletom' },
-               
+
               ].map((item, index) => (
                 <div className="item" key={index}>
                   <div className="produto_img">
@@ -122,7 +122,7 @@ useEffect(() => {
               <h2>PEÇAS DO MÊS</h2>
               <div className="btn_veja">
                 <Link to="/produtos">
-                <a href="#">VEJA TUDO</a>
+                VEJA TUDO
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 22 22" fill="none">
                   <path d="M1 21L21 1M21 1V20.2M21 1H1.8" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -150,7 +150,7 @@ useEffect(() => {
             </div>
           </div>
         </section>
-        <a href="https://t.me/Femanic_bot" // substitua pelo username real do seu bot
+        <a href="https://t.me/Femanic_bot"
           target="_blank"
           rel="noopener noreferrer"
           style={{

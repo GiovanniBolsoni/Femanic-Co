@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'boxicons/css/boxicons.min.css';
 import '../../styles/superiores.css';
 import '../../styles/produtos.css';
 import { Link } from 'react-router-dom';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '../../context/useCart';
 
 function Superiores() {
   const { cartItems, addToCart } = useCart();
-  
+
 const location = useLocation();
 useEffect(() => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -21,7 +21,7 @@ useEffect(() => {
     { id: 1, src: '/Imagens/8Ve0.jpg', nome: 'Moletom Simples Cinza', preco: 'R$ 89,90' },
     { id: 3, src: '/Imagens/gIk6.jpg', nome: 'Agasalho com Zíper Preto', preco: 'R$ 119,90' },
     { id: 7, src: '/Imagens/b95i.jpg', nome: 'Cropped Preto', preco: 'R$ 39,90' },
-    
+
   ];
 
   const handleAddToCart = (item) => {
@@ -59,8 +59,8 @@ useEffect(() => {
                   <li><Link to="/conjuntos">Conjuntos</Link></li>
                    <li><Link to="/superiores">Superiores</Link></li>
               <li><Link to="/inferiores">Inferiores</Link></li>
-             
-            
+
+
             </ul>
           </li>
           <li>
