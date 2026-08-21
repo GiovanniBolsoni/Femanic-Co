@@ -2,10 +2,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'boxicons/css/boxicons.min.css';
 import '../../styles/Login.css';
 import '../../styles/produtos.css';
+import { useSeo } from '../../hooks/useSeo';
 import Header from '../Header';
 import Footer from '../Footer';
 
 function PoliticaTrocas() {
+  useSeo({
+    title: 'Política de Trocas e Devoluções',
+    description: 'Conheça os prazos e condições para troca ou devolução na Femanic & Co.',
+  });
+
   return (
     <>
       <Header />

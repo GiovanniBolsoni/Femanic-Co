@@ -7,11 +7,13 @@ import '../../styles/produtos.css';
 import { useCart } from '../../context/useCart';
 import { PRODUTOS, TAMANHOS, formatarPreco, getProdutoPorId } from '../../data/produtos';
 import { buscarAvaliacoesProduto, enviarAvaliacao } from '../../services/avaliacoes';
+import { useSeo } from '../../hooks/useSeo';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
 import Footer from '../Footer';
 import EstrelasAvaliacao from '../EstrelasAvaliacao';
 import SelosConfianca from '../SelosConfianca';
+import ImagemProduto from '../ImagemProduto';
 
 function ProdutoDetalhe() {
   const { id } = useParams();
@@ -50,6 +52,36 @@ function ProdutoDetalhe() {
     carregarAvaliacoes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
+
+  useSeo({
+    title: produto?.nome || 'Produto não encontrado',
+    description: produto?.descricao,
+    image: produto ? `${window.location.origin}${produto.src}` : undefined,
+    structuredData: produto
+      ? {
+          '@context': 'https://schema.org/',
+          '@type': 'Product',
+          name: produto.nome,
+          description: produto.descricao,
+          image: `${window.location.origin}${produto.src}`,
+          offers: {
+            '@type': 'Offer',
+            priceCurrency: 'BRL',
+            price: produto.preco.toFixed(2),
+            availability: 'https://schema.org/InStock',
+          },
+          ...(avaliacoes.quantidade > 0
+            ? {
+                aggregateRating: {
+                  '@type': 'AggregateRating',
+                  ratingValue: avaliacoes.media.toFixed(1),
+                  reviewCount: avaliacoes.quantidade,
+                },
+              }
+            : {}),
+        }
+      : undefined,
+  });
 
   if (!produto) {
     return (
@@ -129,11 +161,15 @@ function ProdutoDetalhe() {
                 onMouseLeave={() => setZoom(false)}
                 style={{ overflow: 'hidden', maxWidth: '420px' }}
               >
-                <img
+                <ImagemProduto
                   src={produto.src}
                   alt={produto.nome}
+                  width={420}
+                  height={420}
+                  loading="eager"
                   style={{
                     width: '100%',
+                    height: 'auto',
                     transition: 'transform 0.3s ease',
                     transform: zoom ? 'scale(1.3)' : 'scale(1)',
                     cursor: 'zoom-in',
@@ -223,7 +259,7 @@ function ProdutoDetalhe() {
                   {relacionados.map((item) => (
                     <Link className="item" key={item.id} to={`/produto/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                       <div className="produto_img">
-                        <img className="img_item" src={item.src} alt={item.nome} loading="lazy" />
+                        <ImagemProduto className="img_item" src={item.src} alt={item.nome} />
                       </div>
                       <div className="produto_nome">
                         <span>{item.nome}</span>

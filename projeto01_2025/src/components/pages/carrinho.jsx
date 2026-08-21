@@ -5,6 +5,7 @@ import "../../styles/carrinho.css";
 import { apiRequest } from '../../services/api';
 import { formatarPreco } from '../../data/produtos';
 import { calcularFrete, FRETE_GRATIS_A_PARTIR_DE } from '../../data/frete';
+import { useSeo } from '../../hooks/useSeo';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
 import SelosConfianca from '../SelosConfianca';
@@ -18,6 +19,11 @@ const FORMAS_PAGAMENTO = [
 const Carrinho = () => {
   const navigate = useNavigate();
   const { cartItems, addToCart, removeOneFromCart, removeFromCart, clearCart, chaveItem } = useCart();
+
+  useSeo({
+    title: 'Carrinho',
+    description: 'Revise seus produtos e finalize o pedido na Femanic & Co.',
+  });
 
   const location = useLocation();
   useEffect(() => {

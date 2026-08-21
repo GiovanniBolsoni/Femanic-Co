@@ -7,17 +7,24 @@ import '../../styles/produtos.css';
 import { PRODUTOS, formatarPreco } from '../../data/produtos';
 import { useResumoAvaliacoes } from '../../hooks/useResumoAvaliacoes';
 import { useFiltroProdutos } from '../../hooks/useFiltroProdutos';
+import { useSeo } from '../../hooks/useSeo';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
 import Footer from '../Footer';
 import FiltroBar from '../FiltroBar';
 import EstrelasAvaliacao from '../EstrelasAvaliacao';
+import ImagemProduto from '../ImagemProduto';
 
 function Conjuntos() {
   const location = useLocation();
   const baseCategoria = useMemo(() => PRODUTOS.filter((item) => item.categoria === 'conjuntos'), []);
   const resumoAvaliacoes = useResumoAvaliacoes();
   const filtro = useFiltroProdutos(baseCategoria, resumoAvaliacoes);
+
+  useSeo({
+    title: 'Conjuntos',
+    description: 'Conjuntos de moletom da Femanic & Co.',
+  });
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -41,7 +48,7 @@ function Conjuntos() {
               {filtro.resultado.map((item) => (
                 <Link className="item" key={item.id} to={`/produto/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div className="produto_img">
-                    <img className="img_item" src={item.src} alt={item.nome} loading="lazy" />
+                    <ImagemProduto className="img_item" src={item.src} alt={item.nome} />
                   </div>
                   <div className="produto_nome">
                     <span>{item.nome}</span>

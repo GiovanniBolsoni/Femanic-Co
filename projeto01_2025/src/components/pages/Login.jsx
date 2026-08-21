@@ -4,12 +4,18 @@ import "../../styles/Login.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'boxicons/css/boxicons.min.css';
 import { apiRequest, setToken } from '../../services/api';
+import { useSeo } from '../../hooks/useSeo';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
 
 export default function Login() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', senha: '' });
+
+  useSeo({
+    title: 'Entrar',
+    description: 'Acesse sua conta na Femanic & Co.',
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
