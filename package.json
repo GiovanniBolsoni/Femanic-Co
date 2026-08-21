@@ -1,5 +1,16 @@
 {
-  "dependencies": {
-    "axios": "^1.9.0"
+  "name": "femanic-co",
+  "version": "2.1.0",
+  "private": true,
+  "description": "E-commerce full stack de moda com React, Express e MySQL.",
+  "scripts": {
+    "frontend": "npm --prefix projeto01_2025 run dev",
+    "backend": "npm --prefix projeto01_2025/backend run dev",
+    "build": "npm --prefix projeto01_2025 run build",
+    "lint": "npm --prefix projeto01_2025 run lint",
+    "check": "npm run lint && npm run build"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
