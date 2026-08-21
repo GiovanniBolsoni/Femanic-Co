@@ -12,19 +12,20 @@ import Inferiores from "../components/pages/inferiores";
 
 
 export default function AppRoutes() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/cadastro" element={<Cadastro />} />
-        <Route path="/home" element={<HomePage />} />
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/produtos" element={<Produtos />} />
         <Route path="/carrinho" element={<Carrinho />} />
         <Route path="/superiores" element={<Superiores />} />
         <Route path="/conjuntos" element={<Conjuntos />} />
         <Route path="/inferiores" element={<Inferiores />} />
-      </Routes>
-    </Router>
-  );
+        <Route path="*" element={<Navigate to="/home" replace />} />
+      </Routes>
+    </Router>
+  );
 }
