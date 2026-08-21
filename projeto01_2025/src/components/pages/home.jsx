@@ -4,15 +4,22 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'boxicons/css/boxicons.min.css';
 import '../../styles/index.css';
 import { PRODUTOS } from '../../data/produtos';
+import { useSeo } from '../../hooks/useSeo';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
 import Footer from '../Footer';
+import ImagemProduto from '../ImagemProduto';
 
 const LANCAMENTOS = PRODUTOS.slice(0, 3);
 const PECAS_DO_MES = PRODUTOS.slice(3, 6);
 
 function HomePage() {
   const location = useLocation();
+
+  useSeo({
+    title: 'Início',
+    description: 'Femanic & Co. — moda casual com estilo e conforto.',
+  });
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -49,16 +56,16 @@ function HomePage() {
             <div className="linha1"></div>
             <div className="produtos">
               {LANCAMENTOS.map((item) => (
-                <div className="item" key={item.id}>
+                <Link className="item" key={item.id} to={`/produto/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div className="produto_img">
-                    <img className="img_item" src={item.src} alt={item.nome} loading="lazy" />
+                    <ImagemProduto className="img_item" src={item.src} alt={item.nome} />
                     <div className="card-body"></div>
                   </div>
                   <div className="produto_nome">
                     <span>{item.nome}</span>
                   </div>
                   <div className="line"></div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -80,16 +87,16 @@ function HomePage() {
             <div className="linha1"></div>
             <div className="produtos">
               {PECAS_DO_MES.map((item) => (
-                <div className="item" key={item.id}>
+                <Link className="item" key={item.id} to={`/produto/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div className="produto_img">
-                    <img className="img_item" src={item.src} alt={item.nome} loading="lazy" />
+                    <ImagemProduto className="img_item" src={item.src} alt={item.nome} />
                     <div className="card-body"></div>
                   </div>
                   <div className="produto_nome">
                     <span>{item.nome}</span>
                   </div>
                   <div className="line"></div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

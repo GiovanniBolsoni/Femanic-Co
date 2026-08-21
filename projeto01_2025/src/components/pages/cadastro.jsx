@@ -4,6 +4,7 @@ import "../../styles/cadastro.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'boxicons/css/boxicons.min.css';
 import { apiRequest } from '../../services/api';
+import { useSeo } from '../../hooks/useSeo';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
 
@@ -17,6 +18,11 @@ export default function Cadastro() {
     idade: '',
     receber: false,
     termos: false
+  });
+
+  useSeo({
+    title: 'Criar conta',
+    description: 'Crie sua conta na Femanic & Co. e aproveite o catálogo completo.',
   });
 
   const handleChange = (e) => {
