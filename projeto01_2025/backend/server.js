@@ -1,6 +1,5 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import mysql from 'mysql2/promise';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import pool from './db.js';
@@ -8,54 +7,45 @@ import pool from './db.js';
 dotenv.config();
 
 const app = express();
-app.use(express.json())
-app.use(cors());
+app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173' }));
+app.use(express.json({ limit: '100kb' }));
 
 
 // Endpoint Hello-World
 app.get('/api/hello-world', (req, res) => {
-  res.send('Hello World!');
-});
-
-// ======== Endpoints da aplicação ========
-
-// usuário
-// busca todos os cadastros dos usuários
-app.get('/api/cadastro', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT ID, NOME, EMAIL, IDADE, RECEBER, TERMOS FROM usuario');
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Erro ao buscar usuários' });
-  }
+  res.json({ status: 'ok', service: 'Femanic & Co. API' });
 });
 
 // cadastra novos usuários
 app.post('/api/cadastro', async (req, res) => {
   const { nome, email, idade, senha, receber, termos } = req.body;
 
-  if (!nome || !email || !idade || !senha || termos === undefined) {
+  if (!nome?.trim() || !email?.trim() || !idade || !senha || termos !== true) {
     return res.status(400).json({ message: 'Preencha todos os campos obrigatórios' });
   }
 
-  try {
-    const conn = await pool.getConnection();
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    return res.status(400).json({ message: 'Informe um e-mail válido' });
+  }
 
-    const [rows] = await conn.query('SELECT * FROM usuario WHERE EMAIL = ?', [email]);
+  if (senha.length < 6) {
+    return res.status(400).json({ message: 'A senha deve ter pelo menos 6 caracteres' });
+  }
+
+  try {
+    const emailNormalizado = email.trim().toLowerCase();
+    const [rows] = await pool.query('SELECT ID FROM usuario WHERE EMAIL = ?', [emailNormalizado]);
     if (rows.length > 0) {
-      conn.release();
       return res.status(409).json({ message: 'Usuário já cadastrado' });
     }
 
     const hashedPassword = await bcrypt.hash(senha, 10);
-    await conn.query(
+    await pool.query(
       'INSERT INTO usuario (NOME, EMAIL, IDADE, SENHA, RECEBER, TERMOS) VALUES (?, ?, ?, ?, ?, ?)',
-      [nome, email, idade, hashedPassword, receber ? 1 : 0, termos ? 1 : 0]
+      [nome.trim(), emailNormalizado, Number(idade), hashedPassword, receber ? 1 : 0, 1]
     );
 
-    conn.release();
-    res.json({ message: 'Cadastro realizado com sucesso' });
+    res.status(201).json({ message: 'Cadastro realizado com sucesso' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Erro no servidor' });
@@ -71,7 +61,10 @@ app.post('/api/login', async (req, res) => {
   }
 
   try {
-    const [rows] = await pool.query("SELECT ID, SENHA FROM usuario WHERE EMAIL = ?", [email]);
+    const [rows] = await pool.query(
+      'SELECT ID, SENHA FROM usuario WHERE EMAIL = ?',
+      [email.trim().toLowerCase()]
+    );
 
     if (rows.length === 0) {
       return res.status(401).json({ message: "Email ou senha incorretos." });
@@ -93,7 +86,7 @@ app.post('/api/login', async (req, res) => {
 
 
 // produtos
-// busca todos os produtos 
+// busca todos os produtos
 app.get('/api/produto', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM produto');
@@ -108,130 +101,52 @@ app.get('/api/produto', async (req, res) => {
 app.post('/api/carrinho', async (req, res) => {
   const { endereco, produtos } = req.body;
 
-  if (!endereco || !produtos || produtos.length === 0) {
+  if (!endereco || !Array.isArray(produtos) || produtos.length === 0) {
     return res.status(400).json({ message: 'Endereço ou produtos não informados.' });
   }
 
-  const ID_CARRINHO = Date.now(); // Gerador simples de ID de carrinho único
-
-  try {
-    const insertPromises = produtos.map((item) => {
-      const sql = `
-        INSERT INTO carrinhoprod (ID_CARRINHO, PRODUTO, PRECO, QUANTIDADE)
-        VALUES (?, ?, ?, ?)
-      `;
-      return pool.query(sql, [ID_CARRINHO, item.nome, item.preco, item.quantidade]);
-    });
-
-    await Promise.all(insertPromises);
-
-    res.status(201).json({ message: 'Carrinho salvo com sucesso.', ID_CARRINHO });
-  } catch (error) {
-    console.error('Erro ao salvar carrinho:', error);
-    res.status(500).json({ message: 'Erro interno ao salvar o carrinho.' });
+  const { rua, numero, bairro, complemento = '', estado, cidade } = endereco;
+  if (!rua || !numero || !bairro || !estado || !cidade) {
+    return res.status(400).json({ message: 'Preencha os campos obrigatórios do endereço.' });
   }
-});
 
+  const carrinhoId = Date.now();
+  const connection = await pool.getConnection();
 
-// Busca todos os itens do carrinho com subtotal
-app.get('/api/carrinho', async (req, res) => {
   try {
-    const [rows] = await pool.query(
-      'SELECT ID_CARRINHO, PRODUTO, PRECO, QUANTIDADE, SUBTOTAL FROM carrinhoprod ORDER BY ID_CARRINHO'
+    await connection.beginTransaction();
+    await connection.query(
+      'INSERT INTO enderecos (RUA, NUMERO, BAIRRO, COMPLEMENTO, ESTADO, CIDADE) VALUES (?, ?, ?, ?, ?, ?)',
+      [rua, numero, bairro, complemento, estado, cidade]
     );
 
-    const carrinhosMap = {};
-
-    for (const row of rows) {
-      if (!carrinhosMap[row.ID_CARRINHO]) {
-        carrinhosMap[row.ID_CARRINHO] = [];
+    for (const item of produtos) {
+      if (!item.nome || Number(item.preco) <= 0 || Number(item.quantidade) <= 0) {
+        throw new Error('Produto inválido no carrinho.');
       }
-      carrinhosMap[row.ID_CARRINHO].push({
-        produto: row.PRODUTO,
-        preco: row.PRECO,
-        quantidade: row.QUANTIDADE,
-        subtotal: row.SUBTOTAL,
-      });
+      await connection.query(
+        'INSERT INTO carrinhoprod (ID_CARRINHO, PRODUTO, PRECO, QUANTIDADE) VALUES (?, ?, ?, ?)',
+        [carrinhoId, item.nome, Number(item.preco), Number(item.quantidade)]
+      );
     }
 
-    const carrinhos = Object.entries(carrinhosMap).map(([id, produtos]) => ({
-      id_carrinho: id,
-      produtos,
-    }));
-
-    res.status(200).json(carrinhos);
-  } catch (err) {
-    console.error('Erro ao buscar o carrinho:', err);
-    res.status(500).json({ message: 'Erro ao buscar o carrinho' });
-  }
-});
-
-// endereços
-// cadastra um endereço
-app.post('/api/endereco', async (req, res) => {
-  const { rua, numero, bairro, complemento, estado, cidade } = req.body;
-
-  if (!rua || !numero || !bairro || !estado || !cidade) {
-    return res.status(400).json({ message: 'Campos obrigatórios ausentes' });
-  }
-
-  try {
-    await pool.query(
-      'INSERT INTO enderecos (RUA, NUMERO, BAIRRO, COMPLEMENTO, ESTADO, CIDADE) VALUES (?, ?, ?, ?, ?, ?)',
-      [rua, numero, bairro, complemento || '', estado, cidade]
-    );
-    res.status(201).json({ message: 'Endereço salvo com sucesso!' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Erro ao salvar endereço' });
-  }
-});
-
-//busca endereços
-app.get('/api/enderecos', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT * FROM enderecos');
-    res.status(200).json(rows);
-  } catch (err) {
-    console.error('Erro ao buscar endereços:', err);
-    res.status(500).json({ message: 'Erro ao buscar endereços' });
-  }
-});
-
-//carrinho 
-// busca todos os produtos do carrinho 
-app.get('/api/carrinhoprod', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT * FROM carrinhoprod');
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Erro ao buscar o carrinho' });
-  }
-});
-
-// add produtos no carrinho
-app.post('/api/carrinhoprod', async (req, res) => {
-  const { ID, NOME, CLASSE, VALOR } = req.body;
-  if (!ID || !NOME || !CLASSE || !VALOR) {
-    return res.status(400).json({ message: 'Preencha todos os campos do produto' });
-  }
-
-  try {
-    await pool.query(
-      'INSERT INTO carrinhoprod (ID, NOME, CLASSE, VALOR) VALUES (?, ?, ?, ?)',
-      [ID, NOME, CLASSE, VALOR]
-    );
-    res.status(201).json({ message: 'Produto adicionado ao carrinho' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Erro ao adicionar produto no carrinho' });
+    await connection.commit();
+    res.status(201).json({ message: 'Pedido salvo com sucesso.', idCarrinho: carrinhoId });
+  } catch (error) {
+    await connection.rollback();
+    console.error('Erro ao salvar carrinho:', error);
+    res.status(500).json({ message: 'Não foi possível salvar o pedido.' });
+  } finally {
+    connection.release();
   }
 });
 
 
-// Inicia o servidor
-const PORT = 3001;
+app.use((req, res) => {
+  res.status(404).json({ message: 'Rota não encontrada.' });
+});
+
+const PORT = Number(process.env.PORT || 3001);
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
